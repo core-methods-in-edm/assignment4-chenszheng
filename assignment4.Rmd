@@ -16,10 +16,10 @@ The data you will be using comes from the Assistments online intelligent tutorin
 
 ## Start by uploading the data
 ```{r}
-D1 <- 
+D1 <- read.csv("~/CUTC/courses/2017 Fall_Core Methods of Educational Data Mining/1102Assignment4/assignment4-chenszheng/Assistments-confidence.csv")
 
   #We won't need the id variable, so remove that.
-
+D1<-within(D1, rm(id))
 
 ```
 
@@ -44,7 +44,9 @@ tl.col="black", tl.cex=0.6, tl.srt=45,
 ## Create a new data frame with the mean_correct variables removed
 
 ```{r}
-D2 <- 
+D2 <- within(D1,rm(mean_correct))
+
+#View(D2)
 
 #The, scale and center your data for easier interpretation
 D2 <- scale(D2, center = TRUE)
@@ -89,7 +91,9 @@ D4 <- cbind(D3, as.data.frame(D1$mean_correct))
 
 #Now re-run your scatterplots and correlations between the transformed data and mean_correct. If you had dropped some components would you have lost important infomation about mean_correct?
 
-COR2 <- 
+COR2 <- cor(D4)
+
+#Not if dropped PC3 and/or PC5.
 
 ```
 ## Now print out the eigenvectors (often called loadings) for the components you generated:
@@ -111,6 +115,39 @@ biplot(pca)
 
 #Calculate values for each student that represent these your composite variables and then create a new correlogram showing their relationship to mean_correct.
 
+corrplot(COR2, method="circle", tl.pos="lt", type="upper",        
+tl.col="black", tl.cex=0.6, tl.srt=45, 
+        addCoef.col="black", addCoefasPercent = TRUE,
+        sig.level=0.50, insig = "blank")
 ```
 # Part III  
 ## Also in this repository is a data set and codebook from Rod Martin, Patricia Puhlik-Doris, Gwen Larsen, Jeanette Gray, Kelly Weir at the University of Western Ontario about people's sense of humor. Can you perform a PCA on this data?
+
+```{r}
+humor <- read.csv("~/CUTC/courses/2017 Fall_Core Methods of Educational Data Mining/1102Assignment4/assignment4-chenszheng/humor_data.csv")
+
+D5<-select(humor, 1:32)
+
+View(D5)
+
+D5.scale<-scale(D5,center=TRUE)
+
+pca3<-prcomp(D5.scale, scale=TRUE)
+
+summary(pca3)
+
+plot(pca3, type="lines")
+
+#pca3$rotation
+
+D5.temp<-pca3$x
+
+D5.cor<-cbind(D5.temp[,1:6],scale(humor[,33:36]))
+COR.D5<-cor(D5.cor)
+
+corrplot(COR.D5, method="circle", tl.pos="lt", type="upper",        
+tl.col="black", tl.cex=0.6, tl.srt=45, 
+        addCoef.col="black", addCoefasPercent = TRUE,
+        sig.level=0.50, insig = "blank")
+```
+
